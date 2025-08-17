@@ -1,1 +1,1 @@
-# Understanding GraphQL
+# GraphQL in Django

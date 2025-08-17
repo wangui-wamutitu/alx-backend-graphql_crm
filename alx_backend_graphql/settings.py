@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^2al(r1vi%*3m@rd@b%yx^rg4_pc*4s+rdc7(4o$k7a^cr%5q#'
+SECRET_KEY = 'django-insecure-jwjf9gpb=ijg(vzby_elh&p4*tya5k*kynwxtp)f_@yf*@u(bq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,12 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crm',
     'graphene_django',
+    'django_filters',
+    'crm',
 ]
 
 GRAPHENE = {
-    "SCHEMA": "crm.schema.schema",
+    "SCHEMA": "alx_backend_graphql.schema.schema"
 }
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'alx_backend_graphql_crm.urls'
+ROOT_URLCONF = 'alx_backend_graphql.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'alx_backend_graphql_crm.wsgi.application'
+WSGI_APPLICATION = 'alx_backend_graphql.wsgi.application'
 
 
 # Database

@@ -214,10 +214,8 @@ class CreateOrder(graphene.Mutation):
 class Query(graphene.ObjectType):
     all_customers = DjangoFilterConnectionField(CustomerType, filterset_class=CustomerFilter)
     all_products = DjangoFilterConnectionField(ProductType, filterset_class=ProductFilter)
-    # Remove all_orders from connection field since OrderType doesn't have relay interface
-    # all_orders = DjangoFilterConnectionField(OrderType, filterset_class=OrderFilter)
+    all_orders = DjangoFilterConnectionField(OrderType, filterset_class=OrderFilter)
 
-    # Keep your old simple lists as well if you want
     customers = graphene.List(CustomerType)
     products = graphene.List(ProductType)
     orders = graphene.List(OrderType)

@@ -16,11 +16,12 @@ class CustomerType(DjangoObjectType):
         interfaces = (graphene.relay.Node,)  # Relay node for DjangoFilterConnectionField
 
 class ProductType(DjangoObjectType):
-    price = graphene.Float()  # Override to use Float instead of Decimal
+    price = graphene.Float() 
     
     class Meta:
         model = Product
         interfaces = (graphene.relay.Node,)
+        fields = ("id", "name", "price", "stock")
         
     def resolve_price(self, info):
         return float(self.price)
@@ -148,7 +149,39 @@ class CreateProduct(graphene.Mutation):
             stock=input.stock if input.stock is not None else 0
         )
         return CreateProduct(product=product)
+    
 
+#update low stoc products (stock < 10)
+class UpdateLowStockProducts(graphene.Mutation):
+    class Arguments:
+        pass
+
+    success = graphene.Boolean()
+    message = graphene.String()
+    updated_products = graphene.List(ProductType)
+
+    @classmethod
+    def mutate(cls, root, info):
+        low_stock_products = Product.objects.filter(stock_lte=10)
+
+        updated_products = []
+        for product in low_stock_products:
+            product.stock +=10
+            product.save()
+            updated_products.append(product)
+
+        success = True
+
+        if updated_products:
+            message = f"Restocked {len(updated_products)} low-stock products."
+        else:
+            message = "No products required restocking."
+
+        return UpdateLowStockProducts(
+            success=success,
+            message=message,
+            updated_products=updated_products
+        )
 
 # CreateOrder Mutation
 class CreateOrder(graphene.Mutation):
@@ -235,9 +268,12 @@ class Mutation(graphene.ObjectType):
     bulk_create_customers = BulkCreateCustomers.Field() 
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+    update_low_stock_products = UpdateLowStockProducts.Field()
     
     # Also provide camelCase aliases for GraphQL compatibility
     createCustomer = CreateCustomer.Field()
     bulkCreateCustomers = BulkCreateCustomers.Field()
     createProduct = CreateProduct.Field()
     createOrder = CreateOrder.Field()
+    updateLowStockProducts = UpdateLowStockProducts.Field()
+

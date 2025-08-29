@@ -9,6 +9,7 @@ from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
 LOG_FILE = "/tmp/crm_heartbeat_log.txt"
+LOG_LOW_PROD_FILE = '/tmp/low_stock_updates_log.txt'
 GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
 
 
@@ -45,3 +46,45 @@ def log_crm_heartbeat():
     # Append log
     with open(LOG_FILE, "a") as f:
         f.write(message + "\n")
+
+
+def update_low_stock():
+    try:
+        transport = RequestsHTTPTransport(
+            url=GRAPHQL_ENDPOINT,
+            verify=True,
+            retries=3,
+        )
+
+        client = Client(transport=transport, fetch_schema_from_transport=False)
+
+        mutation = gql(
+            """
+            mutation {
+                updateLowStockProducts {
+                    success
+                    message
+                    updatedProducts {
+                    id
+                    name
+                    price
+                    stock
+                    }
+                }
+            }
+            """
+        )
+        result = client.execute(mutation)
+        data = result.get("updateLowStockProducts", {})
+        timestamp = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
+
+        with open(LOG_LOW_PROD_FILE, "a") as f:
+            for product in data.get("updatedProducts", []):
+                log_message = f"{timestamp}: {product['name']} has {product['stock']} in stock"
+                f.write(log_message + "\n")
+
+    except Exception as e:
+        timestamp = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
+        error_message = f"{timestamp}: An error occurred in update_low_stock - {e}"
+        with open(LOG_LOW_PROD_FILE, "a") as f:
+            f.write(error_message + "\n")

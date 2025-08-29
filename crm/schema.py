@@ -9,6 +9,7 @@ from datetime import datetime
 from django.utils import timezone
 from .filters import CustomerFilter, ProductFilter, OrderFilter
 from graphene_django.filter import DjangoFilterConnectionField
+from crm.models import Product
 
 class CustomerType(DjangoObjectType):
     class Meta:

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from django_crontab import crontab
+from django_celery_beat import crontab
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
